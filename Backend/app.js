@@ -4,6 +4,8 @@ import morgan from "morgan";
 import connectDB from "./configs/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import paymentRoutes from "./routes/payment.js";
+import webhookRoutes from "./routes/webhook.js";
 import cors from "cors";
 
 // Config dotenv
@@ -29,13 +31,15 @@ app.set('trust proxy', true);
 // Routes
 app.use("/api/v1/auth", authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/webhook', webhookRoutes);
 
 // Root endpoint
 app.get("/", (request, response) => {
     response.send("Server is up and running");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
     console.log(`Server Running on ${PORT}`);

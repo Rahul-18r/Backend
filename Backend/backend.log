@@ -1,0 +1,9 @@
+﻿
+> backend@1.0.0 start
+> node app.js
+
+{"level":"warn","message":"Canvas module not available. Ticket generation will be disabled.","timestamp":"2025-10-17T10:11:05.359Z"}
+Server Running on 5000
+{"level":"info","message":"MongoDB Connected: cluster1-shard-00-02.rpqxo.mongodb.net","timestamp":"2025-10-17T10:11:05.898Z"}
+Events cache preloaded successfully
+[0mGET /api/v1/auth/events [32m200[0m 6.181 ms - 24254[0m

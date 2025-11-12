@@ -1,25 +1,35 @@
 import QRCode from "qrcode";
 
-export const generateQRCode = async (participantId, eventCount) => {
+export const generateQRCode = async (ticketUid, participantName, eventNames) => {
   try {
-    const qrUrl = `https://shreedevisambhram.in/verify?id=${participantId}`;
-    let color = '#000401';
-    if (eventCount === 4) {
-      color = '#F5F5F5';
-    }
+    // Create verification URL with ticketUid as query parameter
+    // Format: http://localhost:3069/verify?ticketUid={ticketUid}
+    // Or: https://yoursite.com/verify?ticketUid={ticketUid}
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3069';
+    const verificationUrl = `${baseUrl}/verify?ticketUid=${ticketUid}`;
+    
+    console.log('🎯 QR CODE GENERATION:');
+    console.log('   Ticket UID:', ticketUid);
+    console.log('   Base URL:', baseUrl);
+    console.log('   ✅ Final QR URL:', verificationUrl);
+    console.log('   🚫 NOT generating JSON - Using URL format!');
 
-    // Generate QR code with white color for visibility as a base64 string
-    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+    // Generate QR code with the verification URL (NOT JSON!)
+    const qrCodeDataUrl = await QRCode.toDataURL(verificationUrl, {
       color: {
-        dark: color,    // QR code color for high visibility
-        light: '#00000000'  // Transparent background
+        dark: '#000000',    // Black QR code
+        light: '#FFFFFF'    // White background
       },
       margin: 1,
-      width: 600  // Adjust width to increase the QR code size, if needed
+      width: 600,
+      errorCorrectionLevel: 'H'
     });
 
     // Remove the "data:image/png;base64," prefix and return only the base64 string
     const base64Image = qrCodeDataUrl.replace(/^data:image\/png;base64,/, '');
+    
+    console.log('   ✅ QR Code generated successfully (URL format)');
+    
     return base64Image;
 
   } catch (error) {

@@ -2,50 +2,7 @@ import spotParticipant from '../models/spotParticipant.js';
 import Participant from '../models/Participant.js';
 import jwt from 'jsonwebtoken';
 import NodeCache from 'node-cache';
-import { rateLimit } from 'express-rate-limit';
-import expressValidator from 'express-validator';
 import Admin from '../models/mainAdmin.js';
-
-const { check, validationResult } = expressValidator;
-
-
-// Rate limiting middleware with fixed configuration
-export const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    standardHeaders: true,
-    legacyHeaders: false,
-    trustProxy: false, // Disable trust proxy
-    handler: (req, res) => {
-        return res.status(429).json({
-            success: false,
-            message: 'Too many login attempts, please try again later',
-            timestamp: new Date().toISOString()
-        });
-    },
-    keyGenerator: (req) => {
-        return req.ip // Use raw IP address
-    }
-});
-
-// Input validation middleware with improved messages
-const validateLogin = [
-    check('name')
-        .trim()
-        .notEmpty().withMessage('Name is required')
-        .isLength({ min: 2, max: 50 }).withMessage('Name must be between 2 and 50 characters')
-        .escape(),
-    check('contact')
-        .exists().withMessage('Contact is required')
-        .custom((value) => {
-            if (!value) return false;
-            const numStr = value.toString();
-            return /^\d{10}$/.test(numStr);
-        }).withMessage('Contact must be a valid 10-digit number'),
-    check('password')
-        .exists().withMessage('Password is required')
-        .isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-];
 
 // Enhanced cache configuration
 const cache = new NodeCache({
@@ -91,14 +48,9 @@ const asyncHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch((error) => handleError(res, error));
 };
 
-// Remove the loadAdminData function as it's no longer needed
-
-// Update login handler
-export const adminLogin = [
-    validateLogin,
-    loginLimiter,
-    asyncHandler(async (req, res) => {
-        try {
+// Simple login handler without rate limiting
+export const adminLogin = asyncHandler(async (req, res) => {
+    try {
             const { contact, password, name } = sanitizeInput(req.body);
 
             console.log('Login data:', { contact, password, name });
@@ -131,8 +83,7 @@ export const adminLogin = [
                 {
                     name: adminData.name,
                     contact: adminData.phone,
-                    role: 'admin',
-                    iat: Date.now()
+                    role: 'admin'
                 },
                 process.env.JWT_SECRET || 'your-secret-key',
                 { expiresIn: '12h' }
@@ -157,8 +108,7 @@ export const adminLogin = [
                 details: error.message
             }, 500);
         }
-    })
-];
+});
 
 export const createParticipant = asyncHandler(async (req, res) => {
     const sanitizedData = sanitizeInput(req.body);
@@ -186,16 +136,13 @@ export const createParticipant = asyncHandler(async (req, res) => {
     );
 });
 
-// Optimize getAllParticipants with pagination
+// Optimize getAllParticipants with pagination - NO CACHE for real-time updates
 export const getAllParticipants = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 50;
-    const cacheKey = `all_participants_${page}_${limit}`;
+    const limit = parseInt(req.query.limit) || 1000; // Increased limit to get all participants
 
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-        return sendResponse(res, cachedData);
-    }
+    // CACHE DISABLED - Always fetch fresh data from MongoDB for real-time updates
+    console.log(`[${new Date().toISOString()}] Fetching fresh participant data from MongoDB...`);
 
     // Calculate total counts from both collections
     const [regularTotal, spotTotal] = await Promise.all([
@@ -227,6 +174,8 @@ export const getAllParticipants = asyncHandler(async (req, res) => {
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, limit); // Ensure we only return the requested limit
 
+    console.log(`[${new Date().toISOString()}] Found ${combinedParticipants.length} total participants (${regularTotal} regular + ${spotTotal} spot)`);
+
     const data = {
         participants: combinedParticipants,
         pagination: {
@@ -241,8 +190,91 @@ export const getAllParticipants = asyncHandler(async (req, res) => {
         }
     };
 
-    cache.set(cacheKey, data);
+    // NO CACHING - Real-time data only
     return sendResponse(res, data);
+});
+
+// Get Dashboard Data - Protected Route
+export const getDashboard = asyncHandler(async (req, res) => {
+    try {
+        // Get coordinator info from JWT (set by protect middleware)
+        const coordinatorContact = req.user.contact;
+        
+        // Find coordinator details
+        const coordinator = await Admin.findOne({ phone: coordinatorContact })
+            .select('-password')
+            .lean();
+
+        if (!coordinator) {
+            return handleError(res, {
+                message: 'Coordinator not found',
+                code: 'NOT_FOUND'
+            }, 404);
+        }
+
+        // Calculate statistics from both collections
+        const [regularTotal, spotTotal] = await Promise.all([
+            Participant.countDocuments(),
+            spotParticipant.countDocuments()
+        ]);
+
+        // Fetch sample participants for revenue calculation
+        const [regularParticipants, spotParticipants] = await Promise.all([
+            Participant.find().select('registrations').lean().limit(1000),
+            spotParticipant.find().select('registrations').lean().limit(1000)
+        ]);
+
+        const allParticipants = [...regularParticipants, ...spotParticipants];
+
+        // Calculate stats
+        let totalRevenue = 0;
+        let totalEvents = 0;
+        let paidCount = 0;
+        let pendingCount = 0;
+
+        allParticipants.forEach(participant => {
+            if (participant.registrations && participant.registrations.length > 0) {
+                participant.registrations.forEach(reg => {
+                    totalEvents++;
+                    totalRevenue += reg.amount || 0;
+                    if (reg.payment_status === 'paid') {
+                        paidCount++;
+                    } else if (reg.payment_status === 'pending') {
+                        pendingCount++;
+                    }
+                });
+            }
+        });
+
+        const dashboardData = {
+            coordinator: {
+                name: coordinator.name,
+                phone: coordinator.phone,
+                role: 'admin'
+            },
+            stats: {
+                totalParticipants: regularTotal + spotTotal,
+                totalEvents: totalEvents,
+                totalRevenue: totalRevenue,
+                paidCount: paidCount,
+                pendingCount: pendingCount
+            },
+            timestamp: new Date().toISOString()
+        };
+
+        return sendResponse(res, {
+            message: 'Dashboard data retrieved successfully',
+            data: dashboardData
+        });
+
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        return handleError(res, {
+            message: 'Failed to load dashboard data',
+            code: 'DASHBOARD_ERROR',
+            details: error.message
+        }, 500);
+    }
 });
 
 // ...existing code...

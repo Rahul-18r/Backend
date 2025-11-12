@@ -49,7 +49,8 @@ const connectWithRetry = async (retryCount = 0) => {
     }
 
     logger.error('Failed to connect to MongoDB after maximum retries');
-    process.exit(1);
+    logger.warn('Server will continue running without database connection');
+    return null;
   }
 };
 

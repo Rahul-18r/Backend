@@ -16,8 +16,14 @@ router.post('/payment/webhooks', express.json({
     verify: (req, res, buf) => { req.rawBody = buf; }
 }), razorpayWebhook);
 
-// Note: Your ticket route is incomplete
+// Ticket verification routes - support both GET and POST
+// GET: /verify/ticket?ticketUid=PARTICIPANT_ID (for QR code scanning)
+// POST: /verify/ticket with body { ticketUid: PARTICIPANT_ID }
+router.get('/verify/ticket', verifyTicket);
 router.post('/verify/ticket', verifyTicket);
+
+// Alternative shorter route for QR scanning
+router.get('/verify', verifyTicket);
 
 // Preload the events cache when the server starts
 preloadCache();

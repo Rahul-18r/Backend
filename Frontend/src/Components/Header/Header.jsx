@@ -40,7 +40,7 @@ const Header = () => {
                         <p className="description">
                             A National Level Technical & Cultural Fest.
                         </p>
-                        <p className="date">On 6 <p className='th'> th</p> &  7 <p className='th'>th</p> December 2024</p>
+                        <p className="date">On 6 <span className='th'>th</span> &amp; 7 <span className='th'>th</span> December 2024</p>
 
                         <div className='btn-width'>
                             <Link to='/about'><button className='explore-btn'>Explore</button></Link>
@@ -54,7 +54,7 @@ const Header = () => {
                         <Countdown targetDate="2024-12-06" />
                     </div>
                     <button onClick={scrollToSpotlight} className="down-button">
-                        <p>click here</p>
+                        <span>click here</span>
                         <i className="fa-duotone fa-solid fa-angles-down"></i>
                     </button>
                 </div>

@@ -137,7 +137,14 @@ const RegistrationForm = () => {
                     /> : <>
                     </>
                 }
-
+                <input
+                    type="email"
+                    placeholder="Enter Your Email"
+                    name="email"
+                    onChange={onChangeHandler}
+                    value={data.email}
+                    required
+                />
                 <input
                     type="number"
                     placeholder="Enter Your Mobile Number"

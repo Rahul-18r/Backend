@@ -1,0 +1,770 @@
+[{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe305"
+  },
+  "eventName": "Red Line Trivia",
+  "eventSubName": "(Bikes & Cars Quiz)",
+  "teamSize": 2,
+  "eventType": "Special",
+  "description": "Rev up your knowledge of cars, bikes, and futuristic tech! Challenge friends or go solo—prove you're the ultimate motorhead!",
+  "date": "2024-12-06",
+  "time": "11:00 AM",
+  "venue": "Edusat Room",
+  "studentCoordinator": "Sujan A Gowda",
+  "studentCoordinatorContact": "7892390028",
+  "rules": [
+    "Two in a team",
+    "The game consists of 5 rounds",
+    "Use of mobile phone is prohibited",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe308"
+  },
+  "eventName": "Lumina Films",
+  "eventSubName": "(Reel Making)",
+  "teamSize": 2,
+  "eventType": "Special",
+  "description": "Step into the spotlight by creating a 60-second reel that captures the fest's energy, with fun themes and editing tips!",
+  "date": "2024-12-06",
+  "time": "11:00 AM",
+  "venue": "Room No 102",
+  "studentCoordinator": "Impana K H",
+  "studentCoordinatorContact": "6361750271",
+  "rules": [
+    "Two in a team",
+    "The reel must not exceed 60 seconds in length",
+    "The reel must be an original creation by the participants",
+    "Participants must submit their video within the allotted time",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30c"
+  },
+  "eventName": "Glow Topia",
+  "eventSubName": "(Group Dance)",
+  "teamSize": 10,
+  "eventType": "Cultural",
+  "description": "A synchronized dance performance showcasing precision, cohesion, and creativity, with stunning formations that captivate and mesmerize the audience.",
+  "date": "2024-12-07",
+  "time": "11:30 AM",
+  "venue": "Auditorium",
+  "studentCoordinator": "Anuvindha",
+  "studentCoordinatorContact": "9400673212",
+  "rules": [
+    "6 to 10 in a team",
+    "Time limit: 4+1 mins",
+    "Any form of dance is allowed",
+    "Multiple teams from each college are allowed to participate",
+    "Use of fire, color and smoke are restricted",
+    "Music should be submitted half an hour prior to the start of the event",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30d"
+  },
+  "eventName": "Hikari Matsuri",
+  "eventSubName": "(Anime Quiz)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "A quiz for anime enthusiasts, testing knowledge across legendary series and characters—only the true fans will rise to the top!",
+  "date": "2024-12-07",
+  "time": "12:00 PM",
+  "venue": "Edusat Room",
+  "studentCoordinator": "Ritesh",
+  "studentCoordinatorContact": "9448571006",
+  "rules": [
+    "Individual participation",
+    "No electronic devices are allowed during the competition. Anyone found using them will be disqualified.",
+    "A total of 4 rounds will be conducted"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe314"
+  },
+  "eventName": "UXperts",
+  "eventSubName": "(Graphic Designing)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Design the Future: Where Creativity Meets Technology! a creative process that uses images, typography, motion graphics to communicate a message or promote an idea",
+  "date": "2024-12-06",
+  "time": "11:00 to 1:00",
+  "venue": "VLSI Lab",
+  "studentCoordinator": "Anargh",
+  "studentCoordinatorContact": "8590680255",
+  "rules": [
+    "Individual participation",
+    "Required software will be provided (Figma,Canva,AdobeXD)",
+    "Use of any personal gadget is not allowed",
+    "Topic will be assigned on the spot"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe315"
+  },
+  "eventName": "Eyes Off, Code On!",
+  "eventSubName": "(Blind Coding)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Eyes Off people, an event where you can see the world but the system cannot,  write computer programs to help computers get their vision back.",
+  "date": "2024-12-06",
+  "time": "12:00 to 2:00",
+  "venue": "CSE Lab (2nd Floor)",
+  "studentCoordinator": "Abhijith Nayak",
+  "studentCoordinatorContact": "9353635749",
+  "rules": [
+    "Two make a team",
+    "Participants will be allotted a computer, and the displays will be turned off",
+    "Participants need to write code for the given simple problem statement using C",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31e"
+  },
+  "eventName": "Amped Up!",
+  "eventSubName": "(Soldering Excellence)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Spark your creativity in “AMPED UP!” – solder circuits, solve problems, and compete for amazing rewards!",
+  "date": "2024-12-06",
+  "time": "2:00 to 4:00",
+  "venue": "Digital Electronics Lab",
+  "studentCoordinator": "H S Gangothri",
+  "studentCoordinatorContact": "8088597874",
+  "rules": [
+    "It's an individual participation challenge.",
+    "Each participant would be given a Printed Circuit Board (PCB).",
+    "Soldering gun will be provided.",
+    "The participants have to solder the circuit according to the problem statement within the specified time duration.",
+    "Participants will have to solder the given components on the PCB with dimensions on the order of millimeters."
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe322"
+  },
+  "eventName": "Luminary Designs",
+  "eventSubName": "(CAD Master)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Showcase your CAD skills in “LUMINARY DESIGNS” – create, design, and compete for top rewards in this creative challenge!",
+  "date": "2024-12-06",
+  "time": "11:00 to 1:00",
+  "venue": "New Building (3rd Floor)",
+  "studentCoordinator": "Rahul Gowda",
+  "studentCoordinatorContact": "9449471062",
+  "rules": [
+    "Individual participation ",
+    "Time duration: 2hrs",
+    "2D drawing of the mechanical part will be given",
+    "Computer  will be provided / participants can get their own laptops"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe304"
+  },
+  "eventName": "Flaunt and Flow ",
+  "eventSubName": "(Fashion Walk)",
+  "teamSize": 6,
+  "eventType": "Special",
+  "description": "A moving art exhibit of seasonal trends, where style meets innovation. Witness high fashion brought to life, inspiring the next wave of runway-to-rack designs.",
+  "date": "2024-12-06",
+  "time": "1:00 PM",
+  "venue": "Auditorium",
+  "studentCoordinator": "Vidyavati Ganiger",
+  "studentCoordinatorContact": "8310899964",
+  "rules": [
+    "4 to 6 members in a team",
+    "Time: 4+1 mins",
+    "Any theme is welcomed, so bring your creativity to the runway",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe306"
+  },
+  "eventName": "Sakura Square",
+  "eventSubName": "(Ludo)",
+  "teamSize": 1,
+  "eventType": "Special",
+  "description": "Roll the dice and relive the classic thrill! Join the ultimate Ludo showdown where strategy, luck, and fun collide. Ready to claim victory?",
+  "date": "2024-12-06",
+  "time": "1:00 PM",
+  "venue": "Edusat Room",
+  "studentCoordinator": "Ramyashree Rao",
+  "studentCoordinatorContact": "8073594142",
+  "rules": [
+    "No team-up",
+    "Players should pre install Ludo King app in their mobile",
+    "Any foul play will result in immediate disqualification"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30a"
+  },
+  "eventName": "Kinetic Combat",
+  "eventSubName": "(Face-Off Dance)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "A high-energy dance battle where rhythm, creativity, and style collide. Dancers compete with unique moves, freestyle, and stunts!",
+  "date": "2024-12-07",
+  "time": "2:00 PM",
+  "venue": "Parking Area",
+  "studentCoordinator": "Nisarga S",
+  "studentCoordinatorContact": "8971442997",
+  "rules": [
+    "The dancers will be challenged to dance to the beats of a live DJ",
+    "The music genre will change for each pair of dancers and can range from any genre of music such as rap, pop, breakbeats, funk etc",
+    "Judges will choose 1 dancer from each battle to advance to the next round until the battle progresses to 2 final dancers"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30b"
+  },
+  "eventName": "Celestial Solos",
+  "eventSubName": "(Solo Dance)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "A dance of fire and finesse, where every move ignites the stage with passion. Each twist and leap tells a story beyond words—pure, powerful, unforgettable.",
+  "date": "2024-12-07",
+  "time": "9:00 AM",
+  "venue": "Auditorium",
+  "studentCoordinator": "Thripthi",
+  "studentCoordinatorContact": "6356805284",
+  "rules": [
+    "Time limit: 3+1 mins",
+    "Music should be submitted half an hour prior to the start of the event",
+    "Any forms of dances are allowed",
+    "Any number of participants from each college are allowed",
+    "Use of fire, color and smoke are restricted"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30f"
+  },
+  "eventName": "Glow Hunt",
+  "eventSubName": "(Treasure Hunt)",
+  "teamSize": 4,
+  "eventType": "Cultural",
+  "description": "Gear up for an exhilarating hunt! Team up, solve clues, and race to uncover hidden treasures. Thrilling rewards await the sharpest adventurers!",
+  "date": "2024-12-07",
+  "time": "9:00 AM",
+  "venue": "Room No 102 & 103",
+  "studentCoordinator": "Yashwanth",
+  "studentCoordinatorContact": "9110803974",
+  "rules": [
+    "4 in a team",
+    "Clues can be puzzles, riddles or links",
+    "Do not tamper with other teams clues or disrupt their progress",
+    "Cheating, tampering with other teams, or breaking any rules will result in disqualification",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe313"
+  },
+  "eventName": "Shutter Showcase",
+  "eventSubName": "(Photography)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "Capture stunning moments through portrait and landscape photography. Perfect for all skill levels, connect with fellow artists and create lasting impressions.",
+  "date": "2024-12-07",
+  "time": "9:00 AM",
+  "venue": "Room No 202",
+  "studentCoordinator": "Kavyanjali",
+  "studentCoordinatorContact": "9739727200",
+  "rules": [
+    "Individual Participation",
+    "All the pictures must be captured within the campus bounds",
+    "One of the best picture of your capture must be submitted",
+    "Images/photos must be captured only using the digital camera",
+    "Editing and manipulation of image is not allowed"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe317"
+  },
+  "eventName": "Project Nexus",
+  "eventSubName": "(Mini Project Showcase)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Welcome to the Mini Project Showcase Extravaganza! Dive into a world where innovation meets inspiration, as talented minds present their incredible mini projects.",
+  "date": "2024-12-06",
+  "time": "2:30 to 4:30",
+  "venue": "Edusat",
+  "studentCoordinator": "K Mukesh",
+  "studentCoordinatorContact": "8310504218",
+  "rules": [
+    "Maximum of two participants",
+    "Each team will have 10 minutes to present, followed by a 5-minute Q&A session",
+    "A live demonstration of the project is required",
+    "Projects may cover any technology or domain (e.g., web development, machine learning, mobile apps, IOT), But must be strictly within the computer domain",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31b"
+  },
+  "eventName": "The Code Chase",
+  "eventSubName": "(Code Relay)",
+  "teamSize": 3,
+  "eventType": "Technical",
+  "description": "Code Relay: Passing the Torch, Solving the Future! a technical event where teams of programmers work together to solve coding challenges in a relay-style.",
+  "date": "2024-12-06",
+  "time": "12:00 to 2:00",
+  "venue": "ISE Lab (1st Floor)",
+  "studentCoordinator": "Nithish",
+  "studentCoordinatorContact": "6364198134",
+  "rules": [
+    "2 to 3 members make a team",
+    "The total relay time is 30 minutes",
+    "Each member can code for a maximum of 10 minutes before passing the task to the next teammate, without discussing it",
+    "Communication during the event is only permitted through the code",
+    "Use of the internet or online assistance is strictly prohibited.",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe303"
+  },
+  "eventName": "Yaksha Vismaya",
+  "eventSubName": "(Yakshagana)",
+  "teamSize": 1,
+  "eventType": "Special",
+  "description": "A traditional art form blending music, dance, and dramatic storytelling with vibrant costumes, rhythm, and powerful expressions.",
+  "date": "2024-12-06",
+  "time": "11:00 AM",
+  "venue": "Auditorium",
+  "studentCoordinator": "Karthik Acharya",
+  "studentCoordinatorContact": "7899282705",
+  "rules": [
+    "Individual Participation",
+    "Each participant will be given time period of 8+2 mins for Natya and Arthagarike",
+    "Himmela should be recorded",
+    "Judgement is based on the Costume, Natya and Arthagarike"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe309"
+  },
+  "eventName": "Tactical Takeover",
+  "eventSubName": "(BGMI)",
+  "teamSize": 4,
+  "eventType": "Cultural",
+  "description": "Dive into the action of BGMI! Team up, strategize, and battle for survival in this fast-paced, thrilling event. Gear up and conquer!",
+  "date": "2024-12-07",
+  "time": "10:00 AM",
+  "venue": "CS Lab (2nd Floor)",
+  "studentCoordinator": "Ravish S M",
+  "studentCoordinatorContact": "8660574605",
+  "rules": [
+    "Players will participate as a 4 man-squad",
+    "Only mobile phones are allowed. Emulator, tablets & iPads are not allowed",
+    "Player cannot be changed in the middle of the tournament",
+    "Account level must be above 30",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe30e"
+  },
+  "eventName": "Spot Light Summit",
+  "eventSubName": "(Mock Press)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "A dazzling event of stars, red carpet glamour, exclusive interviews, live performances, and prime networking.",
+  "date": "2024-12-07",
+  "time": "1:00 AM",
+  "venue": "Auditorium",
+  "studentCoordinator": "Dhanushree",
+  "studentCoordinatorContact": "7760917932",
+  "rules": [
+    "Individual Participation",
+    "The participants will be given the celebrity name to be performed prior 20 minutes of the event",
+    "Participants must adhere to their assigned roles",
+    "Participants are evaluated based on the clarity of questions/answers, professionalism, adherence to time, and factual accuracy"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe311"
+  },
+  "eventName": "Beacon Ballads",
+  "eventSubName": "(Solo Singing)",
+  "teamSize": 1,
+  "eventType": "Cultural",
+  "description": "Step into the heartfelt world of a soul-stirring vocalist, where every note resonates with emotion and authenticity.",
+  "date": "2024-12-07",
+  "time": "10:00 AM",
+  "venue": "Edusat Room",
+  "studentCoordinator": "Sanjana Naik",
+  "studentCoordinatorContact": "8088547310",
+  "rules": [
+    "Time limit: 3+1mins",
+    "Singers can perform with or without karaoke",
+    "Multiple participants from a college are welcome to join",
+    "Each participant is allowed to use at most one instrument during their performance",
+    "Singing can be in any language of choice"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe316"
+  },
+  "eventName": "Webverse",
+  "eventSubName": "(Web Designing)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Step into the digital playground at our Web Design Marathon: Unleash creativity, craft stunning websites, and push the digital frontier!",
+  "date": "2024-12-06",
+  "time": "1:00 to 3:00",
+  "venue": "VLSI Lab",
+  "studentCoordinator": "Esha",
+  "studentCoordinatorContact": "9019057119",
+  "rules": [
+    "Two make a team",
+    "It will be conducted in offline mode",
+    "Students involved in unfair means will be disqualified",
+    "Judging criteria: Responsiveness, creativity, and functionality",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe318"
+  },
+  "eventName": "Strategic I T Vision",
+  "eventSubName": "(IT Manager)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Join the IT Manager's Summit: Innovate, lead, and shape the future of technology with top IT minds!",
+  "date": "2024-12-06",
+  "time": "11:00 onwards",
+  "venue": "Seminar Hall",
+  "studentCoordinator": "Hreshikesha K",
+  "studentCoordinatorContact": "7902837149",
+  "rules": [
+    "Individual participation",
+    "Objective: Assess aptitude, technical skills, and management abilities",
+    "Round 1: MCQs for elimination",
+    "Round 2: Product idea presentation",
+    "Round 3: Stress interview"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe319"
+  },
+  "eventName": "Error Exterminators",
+  "eventSubName": "(Debug the Code)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Race against time to fix bugs, showcase your skills, and become the Master Debugger!",
+  "date": "2024-12-06",
+  "time": "11:00 to 1:00",
+  "venue": "Basement Lab (CAD Lab)",
+  "studentCoordinator": "Ketan",
+  "studentCoordinatorContact": "9110647933",
+  "rules": [
+    "Individual Participation",
+    "Only C language is allowed",
+    "Use of any electronic device is prohibited",
+    "Source code for the program will be provided",
+    "Bonus points will be awarded for the early submission"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31d"
+  },
+  "eventName": "Circuit Frenzy",
+  "eventSubName": "(Circuit Building)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "“Circuit Frenzy” is a team competition that tests electronics knowledge through an MCQ round, followed by a hands-on analog circuit design challenge.",
+  "date": "2024-12-06",
+  "time": "12:00 to 2:00",
+  "venue": "Analog Lab",
+  "studentCoordinator": "Vinutha",
+  "studentCoordinatorContact": "6362306703",
+  "rules": [
+    "Duration: 30 minutes(Preliminary Round)",
+    "Format: Multiple Choice Questions (MCQs)(Preliminary Round)",
+    "Number of questions: 30(Preliminary Round)",
+    "Duration: 1 hour(Final Round)",
+    "Format: Hands-on circuit design and building.(Final Round)",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe321"
+  },
+  "eventName": "Aqua Ignition",
+  "eventSubName": "(Water Rocketry)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Ignite your passion in “AQUA IGNITION” – build, launch, and compete for the highest-flying water rocket!",
+  "date": "2024-12-06",
+  "time": "3:00 to 4:30",
+  "venue": "FM Lab",
+  "studentCoordinator": "Shrinidhi R",
+  "studentCoordinatorContact": "9353416907",
+  "rules": [
+    "Two make a team",
+    "Any electrical components or engines, are not permitted",
+    "Maximum of 2 chances will be provided",
+    "Bottles (2 liters) are to be brought by the participants",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe307"
+  },
+  "eventName": "Run Riot ",
+  "eventSubName": "(Gully Cricket)",
+  "teamSize": 7,
+  "eventType": "Special",
+  "description": "A high-energy cricket showdown with 3-over matches, blending teamwork, strategy, and street rules. Perfect for cricket lovers ready for fast-paced fun and fierce competition!",
+  "date": "2024-12-06",
+  "time": "11:30 AM",
+  "venue": "Volleyball Court",
+  "studentCoordinator": "Sidvik V Shetty",
+  "studentCoordinatorContact": "9108825929",
+  "rules": [
+    "6+1 players from a team and all of them should be from the same college",
+    "3 over",
+    "Different bowler",
+    "Six will be considered as out",
+    "Pitch-catch is considered not out",
+    "ID card is compulsory",
+    "Overarm bowling only",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe310"
+  },
+  "eventName": "Vivid Vistas",
+  "eventSubName": "(Brand Rangoli)",
+  "teamSize": 3,
+  "eventType": "Cultural",
+  "description": "Celebrate tradition with vibrant Rangoli art, blending color and culture under the warm glow of lanterns. A festive fusion of creativity and community!",
+  "date": "2024-12-07",
+  "time": "10:00 AM",
+  "venue": "PG Building 6th Floor",
+  "studentCoordinator": "Poojana S",
+  "studentCoordinatorContact": "8904525297",
+  "rules": [
+    "Three make a team",
+    "Time limit: 2 hrs",
+    "Multiple Teams from the college are welcome to participate in the event",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe312"
+  },
+  "eventName": "Whimsical Wonders",
+  "eventSubName": "(Face Painting)",
+  "teamSize": 2,
+  "eventType": "Cultural",
+  "description": "The face turned into a vivid canvas, where bold strokes and delicate patterns wove stories, transforming skin into living art.",
+  "date": "2024-12-07",
+  "time": "10:30 AM",
+  "venue": "Gallery near Physics Lab",
+  "studentCoordinator": "Shravyashree B S",
+  "studentCoordinatorContact": "7026112251",
+  "rules": [
+    "Two in a team",
+    "Time limit : 2 hrs",
+    "All necessary materials for face painting should be brought by the participants",
+    "Topic will be given on the spot",
+    "Only water color paints are allowed"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31a"
+  },
+  "eventName": "Code & Conquer",
+  "eventSubName": "(Pattern Coding)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Step into the intricate world of Pattern Coding, where algorithms meet artistry . Unleash your analytical prowess and transform abstract challenges into seamless code.",
+  "date": "2024-12-06",
+  "time": "2:00 to 4:00",
+  "venue": "Basement Lab (CAD Lab)",
+  "studentCoordinator": "Chiranjeevi",
+  "studentCoordinatorContact": "8762249523",
+  "rules": [
+    "Individual participation",
+    "Allowed programming languages: C, C++, Python, Java, JavaScript",
+    "Participants must not use any external resources (internet or phone)",
+    "Note: If there are more than 15 participants, a prelims round will be conducted"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31c"
+  },
+  "eventName": "Rush Hour",
+  "eventSubName": "(RC Racing)",
+  "teamSize": 3,
+  "eventType": "Technical",
+  "description": "Get ready for “Rush Hour”! Build your dream car, race to victory, and claim the ultimate championship!",
+  "date": "2024-12-06",
+  "time": "11:00 to 1:00",
+  "venue": "Foundry Lab",
+  "studentCoordinator": "Hazim",
+  "studentCoordinatorContact": "8792839117",
+  "rules": [
+    "Two or three make a team",
+    "The weight of the car should not exceed 4.5kg.",
+    "The max dimensions of the car can be: Length-30cm, Breadth–25cm, Height-15cm",
+    "The max Voltage input to the car should not exceed more than 12 Volts",
+    "Electronic build or bought (Battery Powered) cars are allowed",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe31f"
+  },
+  "eventName": "Robo League",
+  "eventSubName": "(Robo Soccer)",
+  "teamSize": 4,
+  "eventType": "Technical",
+  "description": "Gear up for “ROBO LEAGUE ” – design your robot, kick some goals, and dominate the field for glory!",
+  "date": "2024-12-06",
+  "time": "11:00 to 2:00",
+  "venue": "Mechanical Workshop",
+  "studentCoordinator": "Amrutha",
+  "studentCoordinatorContact": "7760024011",
+  "rules": [
+    "The arena will be with the dimension 8 X 4.5ft (lxb).",
+    "Maximum of 4 members per team is allowed.",
+    "There cannot be change of bot between the match/round.",
+    "The robot can be completely wireless or wired.",
+    "The maximum dimensions of robot should not exceed 300mmx300mmx300mm(lxbxh)",
+    "The electric supply voltage to the bot should not exceed 12V at any point time during the game.",
+    "The weight of the car should not exceed 4.5kg.",
+    "No external AC power supply will be provided during the game.",
+    "Use of non-leak-proof batteries will lead to disqualification.",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe320"
+  },
+  "eventName": "Flight Embers",
+  "eventSubName": "(Aircraft Investigation)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Dive into “FLIGHT EMBERS” – crack aviation puzzles, analyze real-world challenges, and compete for exciting, high-flying prizes!",
+  "date": "2024-12-06",
+  "time": "2:00 to 3:00",
+  "venue": "Room No 102",
+  "studentCoordinator": "Yashwanth",
+  "studentCoordinatorContact": "9110803974",
+  "rules": [
+    "Two make a team",
+    "Round 1: Basic aircraft physics quiz",
+    "Round 2 : To identify the aircraft name and company",
+    "Round 3: Aircraft investigation",
+    "Scenario description shall be provided , team is required to solve it",
+    "You are required to provide an investigation report",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe323"
+  },
+  "eventName": "Build It",
+  "eventSubName": "(Build with playing Cards)",
+  "teamSize": 1,
+  "eventType": "Technical",
+  "description": "Get creative with “BUILD IT” – design, stack, and construct incredible structures for a chance to win!",
+  "date": "2024-12-06",
+  "time": "2:00 to 2:30",
+  "venue": "Room No 002",
+  "studentCoordinator": "Emitre Challam",
+  "studentCoordinatorContact": "6033169963",
+  "rules": [
+    " Individual participation",
+    "1 pack of playing cards will be provided",
+    "Structure to be made using the playing cards only",
+    "No others items can be used (like glue, thread, blade etc)",
+    "participation will be judged on creativity,overall presentation of artistic composition"
+  ]
+},
+{
+  "_id": {
+    "$oid": "673fb480f7c4766c1ccfe324"
+  },
+  "eventName": "Bridge Bust",
+  "eventSubName": "(Bridge Making)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Ready to test your engineering skills? “BRIDGE BUST” challenges you to build a truss bridge using sticks, glue, threads, and blades. Design, build, and see whose bridge can handle the most weight!",
+  "date": "2024-12-06",
+  "time": "12:00 to 1:30",
+  "venue": "Room No 002",
+  "studentCoordinator": "Reshma Das",
+  "studentCoordinatorContact": "9207886551",
+  "rules": [
+    "Two make a team",
+    "Bridge must be atleast 350mm long and should have an overall width of 100mm",
+    "Truss is mandatory. Loads will be applied to test the strength of the truss",
+    "Sticks, glue, thread and blade will be provided",
+    "Each member in the team must register individually"
+  ]
+},
+{
+  "_id": {
+    "$oid": "674c8176f162164c3b82c5a4"
+  },
+  "eventName": "Maze Mayhem",
+  "eventSubName": "(Maze Solver)",
+  "teamSize": 2,
+  "eventType": "Technical",
+  "description": "Navigate the maze, conquer the challenge—be the fastest, be the smartest!",
+  "date": "2024-12-06",
+  "time": "12:00 to 2:00",
+  "venue": "Analog Lab",
+  "studentCoordinator": "Tushar",
+  "studentCoordinatorContact": "7337722659",
+  "rules": [
+    "Two make a team",
+    "Robot's dimensions should be within 15X15X15 cm,with a maximum power limit of 12V.",
+    "Maze walls are 15cm high and 1-2cm thick",
+    "Program the robot to autonomously navigate from strat to finish in the shortest time possible.",
+    "Each member in the team must register individually"
+  ]
+}]

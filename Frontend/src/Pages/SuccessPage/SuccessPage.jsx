@@ -1,16 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 import Save from '../../Components/Save/Save';
 import Preloader from '../../Components/Preloader/Preloader'
 import './SuccessPage.css';
 
 const SuccessPage = () => {
     const location = useLocation();
-    const { participantId, orderId } = location.state || {};
+    const [searchParams] = useSearchParams();
+    const orderId = searchParams.get('order_id') || location.state?.orderId;
     const [isTicketOverlayVisible, setIsTicketOverlayVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [paymentVerified, setPaymentVerified] = useState(false);
 
-    const imgSrc = `https://sambhram-tickets-bucket.s3.ap-south-1.amazonaws.com/tickets/${orderId}.jpg`;
+    const imgSrc = `${import.meta.env.VITE_BACKEND_URL}/api/payment/ticket/image/${orderId}`;
+
+    useEffect(() => {
+        const verifyPayment = async () => {
+            if (!orderId) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/payment/verify`, { order_id: orderId });
+                if (response.data.success) {
+                    setPaymentVerified(true);
+                    // Create participant and generate ticket
+                    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/payment/create-participant-and-ticket`, { order_id: orderId });
+                }
+            } catch (error) {
+                console.error('Payment verification or ticket generation failed:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        verifyPayment();
+    }, [orderId]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -54,7 +81,7 @@ const SuccessPage = () => {
 
     return (
         <>{
-            orderId ? <div className="success-page">
+            orderId && paymentVerified ? <div className="success-page">
                 {isTicketOverlayVisible && (
                     <div className="ticket-overlay">
                         <div className="ticket">

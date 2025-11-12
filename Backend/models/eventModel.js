@@ -12,6 +12,6 @@ const eventSchema = new mongoose.Schema({
   rules: { type: [String], required: true }  
 });
 
-const Event = mongoose.model('event', eventSchema);
+const Event = mongoose.model('event', eventSchema, 'events');
 
 export default Event;

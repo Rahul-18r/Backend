@@ -1,8 +1,7 @@
-import razorpayInstance from "../configs/razorpay.js";
-import crypto from "crypto";
+import { Cashfree, CFEnvironment } from 'cashfree-pg';
 
 // Create an order
-export const createOrder = async (phone, registrations, usn, name, decodedCollege) => {
+export const createOrder = async (phone, registrations, usn, name, decodedCollege, email) => {
     try {
         let amount;
 
@@ -21,40 +20,54 @@ export const createOrder = async (phone, registrations, usn, name, decodedColleg
             console.log("You can't have more than 4 events");
         }
         
-        const options = {
-            amount: amount * 100,  // Amount in paise
-            currency: "INR",
-            receipt: `receipt_order_${Date.now()}`,  // Unique identifier for tracking orders
-            notes: {
-                name: name,
-                usn: usn,
-                phone: phone,
-                college: decodedCollege,
-                registrations: registrations,
+        const orderId = `FEST-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        const request = {
+            order_amount: amount,
+            order_currency: "INR",
+            order_id: orderId,
+            customer_details: {
+                customer_id: `CUST-${Date.now()}`,
+                customer_phone: phone,
+                customer_email: email,
+                customer_name: name,
             },
-          };
+            order_meta: {
+                return_url: `${process.env.FRONTEND_URL}/success?order_id={order_id}`,
+                notify_url: `${process.env.BACKEND_URL}/api/webhook/cashfree`,
+            },
+            order_note: orderId,
+        };
 
-        const order = await razorpayInstance.orders.create(options);
+        const cashfree = new Cashfree(
+            process.env.CASHFREE_ENV === 'production' ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX,
+            process.env.CASHFREE_APP_ID,
+            process.env.CASHFREE_SECRET_KEY
+        );
 
-        console.log("Razorpay order created:", order);
-        return order;
+        const response = await cashfree.PGCreateOrder(request);
+
+        console.log("Cashfree order created:", response.data);
+        return response.data;
 
 
     } catch (error) {
-        console.error("Error creating Razorpay order:", error);
-        throw new Error("Could not create Razorpay order");
+        console.error("Error creating Cashfree order:", error);
+        throw new Error("Could not create Cashfree order");
     }
 };
 
 // Verify payment
-export const verifyPayment = (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
+export const verifyPayment = async (order_id) => {
     try {
-        const generatedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-            .digest("hex");
-        
-        return generatedSignature === razorpay_signature;
+        const cashfree = new Cashfree(
+            process.env.CASHFREE_ENV === 'production' ? CFEnvironment.PRODUCTION : CFEnvironment.SANDBOX,
+            process.env.CASHFREE_APP_ID,
+            process.env.CASHFREE_SECRET_KEY
+        );
+
+        const response = await cashfree.PGFetchOrder(order_id);
+        return response.data.order_status === 'PAID';
     } catch (error) {
         console.error("Error verifying payment:", error);
         throw new Error("Payment verification failed");

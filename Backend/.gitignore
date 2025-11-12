@@ -1,0 +1,7 @@
+# Ticket images - generated locally
+tickets/*.jpg
+tickets/*.jpeg
+tickets/*.png
+
+# But keep the README
+!tickets/README.md

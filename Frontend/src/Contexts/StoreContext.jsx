@@ -33,6 +33,7 @@ export const ContextProvider = ({ children }) => {
     usn: "",
     college: "",
     mobile: "",
+    email: "",
     Othercollege: "",
   });
 
@@ -112,7 +113,7 @@ export const ContextProvider = ({ children }) => {
   };
 
   const validatePaymentData = () => {
-    const requiredFields = ["name", "usn", "college", "mobile"];
+    const requiredFields = ["name", "usn", "college", "mobile", "email"];
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
@@ -134,7 +135,9 @@ export const ContextProvider = ({ children }) => {
       usn: data.usn,
       college: data.college,
       phone: data.mobile,
+      email: data.email,
       amount: amount,
+      eventName: selectedEvent.length === 1 ? "Single Event" : "Multiple Events",
       registrations: selectedEvent.map((id) => ({ event_id: id })),
     };
   };
@@ -146,19 +149,17 @@ export const ContextProvider = ({ children }) => {
 
       setLoading(true);
       const response = await axios.post(
-        `${url}/api/v1/auth/payment`,
+        `${url}/api/payment/create-order`,
         paymentData
       );
 
-      if (!response.data?.orderId) {
+      if (!response.data?.payment_session_id) {
         throw new Error("Invalid response from payment server");
       }
 
       return {
-        participantId: response.data.participantId,
-        orderId: response.data.orderId,
-        amount: response.data.amount,
-        currency: response.data.currency || "INR",
+        orderId: response.data.order_id,
+        paymentSessionId: response.data.payment_session_id,
       };
     } catch (error) {
       console.error("Backend request failed:", error);
@@ -237,25 +238,33 @@ export const ContextProvider = ({ children }) => {
 
   const payNow = async () => {
     try {
-      if (!window.Razorpay) {
-        throw new Error("Razorpay SDK not loaded");
-      }
-
-      if (!razorpayKey) {
-        throw new Error("Razorpay key not configured");
+      if (!window.Cashfree) {
+        throw new Error("Cashfree SDK not loaded");
       }
 
       const paymentDetails = await sendDatatoBackend();
-      const options = initializeRazorpay(paymentDetails);
 
-      const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", handlePaymentError);
-      rzp.open();
+      const cashfree = window.Cashfree({
+        mode: process.env.REACT_APP_CASHFREE_ENV || 'sandbox',
+      });
+
+      cashfree.checkout({
+        paymentSessionId: paymentDetails.paymentSessionId,
+        redirectTarget: '_self',
+      })
+        .then(() => {
+          // Handle success if needed, but redirect is handled by return_url
+        })
+        .catch((err) => {
+          console.error("Payment failed:", err);
+          toast.error("Payment failed: " + err.message);
+        });
+
       return true;
     } catch (error) {
       console.error("Payment initialization failed:", error);
       toast.error(
-        error.response?.data?.message || "Failed to initialize payment"
+        error.response?.data?.error || "Failed to initialize payment"
       );
       return false;
     }
@@ -267,6 +276,7 @@ export const ContextProvider = ({ children }) => {
       usn: "",
       college: "",
       mobile: "",
+      email: "",
       Othercollege: "",
     });
     setStep(1);

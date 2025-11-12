@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Ticket - Tech Fest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .success h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .error h2 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #212529;
+            text-align: right;
+        }
+
+        .events-section {
+            margin-top: 20px;
+        }
+
+        .events-title {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .event-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateX(5px);
+        }
+
+        .event-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .event-details {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .ticket-uid {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 Ticket Verification</h1>
+            <p>Tech Fest 2025</p>
+        </div>
+
+        <div id="content">
+            <div class="loader">
+                <div class="spinner"></div>
+                <p>Verifying ticket...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get ticket UID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketUid = urlParams.get('ticketUid');
+
+        // Backend API URL - change this to your backend URL
+        const BACKEND_URL = 'http://localhost:5000'; // Change port if different
+
+        async function verifyTicket() {
+            const contentDiv = document.getElementById('content');
+
+            // Check if ticketUid exists
+            if (!ticketUid) {
+                contentDiv.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Invalid URL</h2>
+                        <p>No ticket UID provided in the URL.</p>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                            Expected format: /verify?ticketUid=FEST-XXXXXXXX-XXXXXXXX
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Call backend API to verify ticket
+                const response = await fetch(`${BACKEND_URL}/api/verify/ticket?ticketUid=${ticketUid}`);
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Verification failed');
+                }
+
+                // Display success result
+                displaySuccess(result.data);
+
+            } catch (error) {
+                console.error('Error verifying ticket:', error);
+                contentDiv.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Verification Failed</h2>
+                        <p>${error.message}</p>
+                        <div class="info-box" style="margin-top: 15px;">
+                            <p style="font-size: 14px; color: #666;">
+                                <strong>Ticket UID:</strong> ${ticketUid}
+                            </p>
+                            <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                                Please contact support if this is a valid ticket.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function displaySuccess(data) {
+            const contentDiv = document.getElementById('content');
+            
+            // Format event list
+            let eventsHTML = '';
+            if (data.registrations && data.registrations.length > 0) {
+                eventsHTML = `
+                    <div class="events-section">
+                        <div class="events-title">📋 Registered Events (${data.totalEvents})</div>
+                        ${data.registrations.map(reg => `
+                            <div class="event-card">
+                                <div class="event-name">✓ ${reg.eventDetails ? reg.eventDetails.eventName : 'Event Name'}</div>
+                                ${reg.eventDetails ? `
+                                    <div class="event-details">📍 Venue: ${reg.eventDetails.venue}</div>
+                                    <div class="event-details">📅 Date: ${new Date(reg.eventDetails.date).toLocaleDateString()}</div>
+                                    <div class="event-details">🕐 Time: ${reg.eventDetails.time}</div>
+                                    <div class="event-details">🎯 Type: ${reg.eventDetails.eventType}</div>
+                                ` : ''}
+                                <div class="event-details">💰 Amount: ₹${reg.amount}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            contentDiv.innerHTML = `
+                <div class="success">
+                    <h2>
+                        <span style="font-size: 32px;">✅</span>
+                        Valid Ticket
+                    </h2>
+                    <p>This ticket has been successfully verified!</p>
+                </div>
+
+                <div class="ticket-uid">${data.ticketUid}</div>
+
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="info-label">👤 Name:</span>
+                        <span class="info-value">${data.participantInfo.name}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🎓 USN:</span>
+                        <span class="info-value">${data.participantInfo.usn}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">📞 Phone:</span>
+                        <span class="info-value">${data.participantInfo.phone}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🏫 College:</span>
+                        <span class="info-value">${data.participantInfo.college}</span>
+                    </div>
+                </div>
+
+                ${eventsHTML}
+
+                <div class="footer">
+                    <p>Verified at: ${new Date(data.verifiedAt).toLocaleString()}</p>
+                    <p style="margin-top: 10px;">Tech Fest 2025 - Official Ticket Verification</p>
+                </div>
+            `;
+        }
+
+        // Start verification when page loads
+        verifyTicket();
+    </script>
+</body>
+</html>
