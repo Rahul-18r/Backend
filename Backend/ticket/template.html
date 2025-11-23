@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sambhram 2025 - Event Ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-1:#0e101c;
+      --card:#0c0f1e;
+      --ink:#e8eeff;
+      --muted:#a7b1d9;
+      --brand-1:#6aa7ff;
+      --brand-2:#7a5cff;
+      --accent:#0df3b6;
+      --stroke:rgba(255,255,255,.12);
+      --ring:rgba(123,92,255,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; display:grid; place-items:center;
+      background: radial-gradient(1200px 600px at 20% -10%,#161a32 0%,#0f1226 25%,#0e101c 55%,#0b0d18 100%) fixed;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial; color:var(--ink);
+      padding:16px;
+    }
+
+    .frame{ width:min(100%,1100px); padding:clamp(12px,2vw,28px); }
+
+    .ticket{
+      position:relative;
+      width:100%;
+      max-width:1000px;
+      border-radius:28px;
+      overflow:hidden;
+      background: 
+        linear-gradient(135deg, #1a1f3c 0%, #0f1226 100%),
+        radial-gradient(1200px 800px at -10% -20%, rgba(10,240,182,.15), transparent 40%),
+        radial-gradient(1200px 800px at 110% 120%, rgba(110,175,255,.2), transparent 40%);
+      box-shadow: 0 30px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.1);
+      isolation:isolate;
+    }
+
+    #qr{
+        padding: 25px;
+    }
+
+    .ticket::before{
+      content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+      background:linear-gradient(135deg,var(--brand-1),var(--brand-2), #ff6b9d);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; z-index:2; opacity:.8;
+      pointer-events:none;
+    }
+
+    .pattern{ position:absolute; inset:0;
+      background-image: linear-gradient(115deg, rgba(255,255,255,.08) 0.5px, transparent 0.5px), linear-gradient(-115deg, rgba(255,255,255,.08) 0.5px, transparent 0.5px);
+      background-size: 24px 24px, 24px 24px; mix-blend-mode: overlay; opacity:.3; z-index:0; pointer-events:none;
+    }
+
+    .grid{
+      position:relative;
+      display:grid;
+      grid-template-columns: 1.22fr .78fr;
+      gap:0;
+      min-height:520px;
+      z-index:1;
+    }
+
+    .panel-left{ position:relative; padding:28px 28px 20px 32px; display:grid; grid-template-rows:auto auto auto 1fr; gap:12px; }
+    .brand{ display:flex; align-items:center; gap:14px; min-width:0; }
+
+    #sam-logo{
+      height:40px; 
+      border-radius:5px; 
+      place-items:center;
+      flex:0 0 auto;
+    }
+    .event-meta small{ color:var(--muted); display:block; margin-top:2px; font-size:clamp(12px,1.6vw,14px); }
+    h1{ font-size:clamp(18px,2.6vw,26px); line-height:1.2; margin:0; letter-spacing:.2px; white-space:normal; }
+
+    .admit{ margin-left:auto; font-size:clamp(10px,1.4vw,12px); font-weight:700; letter-spacing:2px; padding:8px 12px; border-radius:10px; border:1px dashed var(--stroke); color:var(--ink); opacity:.9; white-space:nowrap; }
+
+    .participant{ display:grid; gap:6px; }
+    .label{ text-transform:uppercase; letter-spacing:1.3px; font-size:clamp(10px,1.4vw,12px); color:var(--muted); }
+    .value{ font-weight:800; font-size:clamp(16px,2.2vw,22px); line-height:1.25; text-wrap:balance; word-break:break-word; }
+
+    .events{ min-height:0; }
+    .events .label{ margin-bottom:6px; }
+    .events ul{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns: 1fr 1fr; gap:12px 18px; }
+    .events li{
+      display:flex; flex-direction:column; align-items:flex-start;
+      gap:8px; padding:12px 14px; border-radius:14px;
+      background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); backdrop-filter: blur(6px);
+      min-width:0;
+    }
+    .ev-name{
+      font-weight:800; letter-spacing:.2px; font-size:clamp(12px,1.9vw,15px);
+      white-space:normal; line-height:1.25;
+    }
+    .ev-meta{ display:flex; gap:10px; flex-wrap:wrap; font-size:clamp(11px,1.6vw,13px); color:var(--muted); }
+    .ev-date{ font-weight:700; }
+    .ev-time{ font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace; }
+
+    .team{
+      display:grid; gap:6px; width:100%;
+      padding:10px; border-radius:12px;
+      background:rgba(255,255,255,.06);
+      border:1px dashed rgba(255,255,255,.2);
+    }
+    .team-name{
+      font-weight:700; font-size:clamp(12px,1.7vw,14px);
+      word-break:break-word;
+      color: rgb(248, 202, 51);
+    }
+    .team-people{ display:grid; gap:4px; }
+    .team-people .person{
+      font-size:clamp(12px,1.6vw,13px); line-height:1.25; word-break:break-word;
+    }
+    .team-people .person.leader{
+      color:rgb(104, 199, 199);
+      font-weight:800;
+      text-shadow:0 0 8px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+
+    .foot{ display:flex; align-items:flex-end; justify-content:space-between; margin-top:10px; gap:8px; flex-wrap:wrap; }
+    .date{ font-weight:800; letter-spacing:1px; color:var(--muted); font-size:clamp(12px,1.8vw,14px); }
+    .badges{ display:flex; gap:8px; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
+    .pill{ padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.2); font-size:clamp(11px,1.6vw,12px); letter-spacing:.4px; background: rgba(255,255,255,.08); }
+
+    .panel-right{
+      position:relative;
+      padding:28px;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:14px;
+      border-left:1px dashed rgba(255,255,255,.2);
+      background: linear-gradient(160deg, rgba(122,92,255,.15), rgba(13,243,182,.12));
+    }
+
+    .amount-paid {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .amount-label {
+      font-size: clamp(10px, 1.4vw, 12px);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+    }
+    .amount-value {
+      font-weight: 800;
+      font-size: clamp(16px, 2.2vw, 22px);
+      color: var(--accent);
+      text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 35%, transparent);
+    }
+
+    .qr-wrap{
+      place-self:center;
+      width:min(78%, 320px);
+      aspect-ratio:1/1;
+      display:grid; place-items:center;
+      border-radius:18px; padding:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.2);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,.05), 0 30px 60px rgba(0,0,0,.35);
+    }
+    .qr-wrap img{ width:100%; height:100%; object-fit:contain; border-radius:10px; background:white; }
+    .qr-caption{ text-align:center; font-size:clamp(11px,1.6vw,12px); color:var(--muted); margin-top:8px; }
+
+    .holo{ position:absolute; right:26px; bottom:24px; width:120px; height:120px; border-radius:18px; background: conic-gradient(from 0deg, #ffb3b3, #ffd699, #fff9a6, #b9ffb4, #a8f0ff, #c1b8ff, #ffb3e1, #ffb3b3); filter: saturate(1.2); mix-blend-mode: screen; opacity:.25; pointer-events:none; }
+    .holo::after{ content:""; position:absolute; inset:10px; border-radius:14px; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%); opacity:.35; }
+
+    .notch{ position:absolute; top:50%; right:38%; transform:translate(50%,-50%); width:28px; height:28px; background:var(--bg-1); border-radius:50%; box-shadow:0 0 0 1px rgba(255,255,255,.2), 0 0 0 8px var(--bg-1); z-index:3; }
+
+    @media (max-width: 720px){
+      .grid{ grid-template-columns:1fr; min-height:unset; }
+      .panel-left{ padding:18px 16px 14px 16px; grid-template-rows:auto auto auto auto; gap:10px; }
+      .panel-right{ padding:16px; border-left:none; border-top:1px dashed rgba(255,255,255,.2); grid-template-rows:auto auto auto; gap:10px; }
+      .events ul{ grid-template-columns: 1fr; gap:10px; }
+      .qr-wrap{ width:min(92%, 380px); }
+      .holo{ width:90px; height:90px; right:16px; bottom:16px; }
+      .admit{ padding:6px 10px; }
+      .notch{ display:none; }
+      #sam-logo{ width: 100%; height:auto; }
+      .amount-paid { position: static; display: flex; flex-direction: row; align-items: center; gap: 8px; margin-top: 8px; }
+    }
+
+    @media print{
+      body{ background:white; padding:0; }
+      .frame{ padding:0 }
+      .ticket{ box-shadow:none; width: 148mm; }
+      .grid{ grid-template-columns: 1.22fr .78fr; }
+      .notch{ display:none }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="ticket" id="ticket">
+      <div class="pattern" aria-hidden="true"></div>
+      <div class="grid">
+        <!-- LEFT -->
+        <section class="panel-left">
+          <div style="display:flex;align-items:center;gap:14px;min-width:0">
+            <div class="brand">
+                <img id="sam-logo" src="../sambhram-logo.png" alt="Sambhram Logo">
+              <div class="event-meta">
+                <h1>SAMBHRAM 2025</h1>
+                <small>SIT Campus • Bantakal</small>
+              </div>
+            </div>
+            <div class="admit">ADMIT ONE</div>
+          </div>
+
+          <div class="participant">
+            <div class="label">Participant</div>
+            <div class="value">{{PARTICIPANT_NAME}}</div>
+          </div>
+
+          <div class="events">
+            <div class="label">Events</div>
+            <ul>
+              {{EVENTS_LIST}}
+            </ul>
+          </div>
+
+          <div class="foot">
+            <div class="date">3 & 4 DEC 2025</div>
+            <div class="badges">
+              <div class="pill">ID: {{TICKET_ID}}</div>
+              <div class="pill">Main Entrance</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <aside class="panel-right">
+          <div class="amount-paid">
+            <div class="amount-label">Amount Paid</div>
+            <div class="amount-value">{{AMOUNT}}</div>
+          </div>
+          
+          <div></div>
+          <div class="qr-wrap">
+            <img id="qr" src="{{QR_CODE_URL}}" alt="QR Code" />
+          </div>
+          <div class="qr-caption">Show this at Registration Desk</div>
+          <div class="holo" aria-hidden="true"></div>
+        </aside>
+      </div>
+      <div class="notch" aria-hidden="true"></div>
+    </div>
+  </div>
+</body>
+</html>

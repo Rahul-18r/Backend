@@ -18,11 +18,32 @@ export const protect = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
         console.log('Auth middleware - Token decoded:', decoded);
-        req.user = { 
-            contact: decoded.contact, 
-            role: decoded.role,
-            name: decoded.name 
-        };
+        
+        // Support admin, coordinator, and registration team tokens
+        if (decoded.role === 'admin') {
+            req.user = { 
+                contact: decoded.contact, 
+                role: decoded.role,
+                name: decoded.name 
+            };
+        } else if (decoded.role === 'coordinator') {
+            req.user = {
+                id: decoded.id,
+                coordinatorId: decoded.coordinatorId,
+                name: decoded.name,
+                eventId: decoded.eventId,
+                eventName: decoded.eventName,
+                role: decoded.role
+            };
+        } else if (decoded.role === 'registration') {
+            req.user = {
+                id: decoded.id,
+                username: decoded.username,
+                name: decoded.name,
+                role: decoded.role
+            };
+        }
+        
         console.log('Auth middleware - User set:', req.user);
         next();
     } catch (error) {
@@ -38,6 +59,17 @@ export const isAdmin = (req, res, next) => {
         next();
     } else {
         console.log('isAdmin middleware - Access denied');
+        res.status(403).json({ message: 'Access denied' });
+    }
+};
+
+export const isAdminOrCoordinator = (req, res, next) => {
+    console.log('isAdminOrCoordinator middleware - Checking user:', req.user);
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'coordinator')) {
+        console.log('isAdminOrCoordinator middleware - Access granted');
+        next();
+    } else {
+        console.log('isAdminOrCoordinator middleware - Access denied');
         res.status(403).json({ message: 'Access denied' });
     }
 };

@@ -16,6 +16,8 @@ const ParticipantSchema = new mongoose.Schema({
          return `FEST-${date}-${random}`;
       }
    },
+   check_in: { type: Boolean, default: false },
+   check_in_time: { type: Date, default: null },
    registrations: [{
       event_id: { type: mongoose.Schema.Types.ObjectId, required: false },
       ticket_url: { type: String, default: null},
@@ -29,9 +31,6 @@ const ParticipantSchema = new mongoose.Schema({
    timestamps: true, // Adds createdAt and updatedAt fields
    versionKey: false // Removes the __v field
 });
-
-// Create index on ticketUid for faster lookups
-ParticipantSchema.index({ ticketUid: 1 });
 
 // Export the model
 const Participant = mongoose.models.Participant || mongoose.model('Participant', ParticipantSchema);

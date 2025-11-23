@@ -3,6 +3,9 @@ import Participant from '../models/Participant.js';
 import jwt from 'jsonwebtoken';
 import NodeCache from 'node-cache';
 import Admin from '../models/mainAdmin.js';
+import Event from '../models/eventModel.js';
+import Coordinator from '../models/Coordinator.js';
+import RegistrationTeam from '../models/RegistrationTeam.js';
 
 // Enhanced cache configuration
 const cache = new NodeCache({
@@ -110,6 +113,69 @@ export const adminLogin = asyncHandler(async (req, res) => {
         }
 });
 
+// Coordinator login handler
+export const coordinatorLogin = asyncHandler(async (req, res) => {
+    try {
+        const { coordinatorId } = sanitizeInput(req.body);
+
+        console.log('Coordinator login attempt:', { coordinatorId });
+
+        // Find coordinator in the database (case-insensitive search)
+        const coordinator = await Coordinator.findOne({ 
+            coordinatorId: { $regex: new RegExp(`^${coordinatorId.trim()}$`, 'i') },
+            isActive: true
+        });
+
+        if (!coordinator) {
+            console.log('Coordinator not found', { coordinatorId });
+            return handleError(res, {
+                message: 'Invalid coordinator ID',
+                code: 'AUTH_FAILED'
+            }, 401);
+        }
+
+        // Update last login
+        coordinator.lastLogin = new Date();
+        await coordinator.save();
+
+        // Generate JWT token
+        const token = jwt.sign(
+            {
+                id: coordinator._id,
+                coordinatorId: coordinator.coordinatorId,
+                name: coordinator.name,
+                eventId: coordinator.eventId,
+                eventName: coordinator.eventName,
+                role: 'coordinator'
+            },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '12h' }
+        );
+
+        console.log('Coordinator login successful', { name: coordinator.name, event: coordinator.eventName });
+
+        return sendResponse(res, {
+            message: 'Login successful',
+            token,
+            coordinator: {
+                name: coordinator.name,
+                coordinatorId: coordinator.coordinatorId,
+                eventName: coordinator.eventName,
+                eventType: coordinator.eventType,
+                role: 'coordinator'
+            }
+        });
+
+    } catch (error) {
+        console.error('Coordinator login error:', error);
+        return handleError(res, {
+            message: 'Login process failed',
+            code: 'LOGIN_ERROR',
+            details: error.message
+        }, 500);
+    }
+});
+
 export const createParticipant = asyncHandler(async (req, res) => {
     const sanitizedData = sanitizeInput(req.body);
     const { name, usn, phone, college, registrations } = sanitizedData;
@@ -141,16 +207,13 @@ export const getAllParticipants = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 1000; // Increased limit to get all participants
 
+    // Check if user is coordinator or admin
+    const userRole = req.user?.role;
+    const userEventId = req.user?.eventId;
+
+    console.log(`[${new Date().toISOString()}] Fetching participants for ${userRole}...`);
+
     // CACHE DISABLED - Always fetch fresh data from MongoDB for real-time updates
-    console.log(`[${new Date().toISOString()}] Fetching fresh participant data from MongoDB...`);
-
-    // Calculate total counts from both collections
-    const [regularTotal, spotTotal] = await Promise.all([
-        Participant.countDocuments(),
-        spotParticipant.countDocuments()
-    ]);
-
-    const totalDocs = regularTotal + spotTotal;
     const skip = (page - 1) * limit;
 
     // Fetch data from both collections
@@ -169,25 +232,74 @@ export const getAllParticipants = asyncHandler(async (req, res) => {
             .sort({ createdAt: -1 })
     ]);
 
-    // Combine and sort by creation date
-    const combinedParticipants = [...regularParticipants, ...spotParticipants]
+    // Combine participants
+    let combinedParticipants = [...regularParticipants, ...spotParticipants]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, limit); // Ensure we only return the requested limit
+        .slice(0, limit);
 
-    console.log(`[${new Date().toISOString()}] Found ${combinedParticipants.length} total participants (${regularTotal} regular + ${spotTotal} spot)`);
+    // Populate event names for all participants
+    let participantsWithEventNames = await Promise.all(
+        combinedParticipants.map(async (participant) => {
+            if (participant.registrations && participant.registrations.length > 0) {
+                const registrationsWithNames = await Promise.all(
+                    participant.registrations.map(async (registration) => {
+                        try {
+                            const event = await Event.findById(registration.event_id).lean();
+                            return {
+                                ...registration,
+                                eventName: event ? event.eventName : 'Unknown Event'
+                            };
+                        } catch (error) {
+                            console.error(`Error fetching event ${registration.event_id}:`, error);
+                            return {
+                                ...registration,
+                                eventName: 'Unknown Event'
+                            };
+                        }
+                    })
+                );
+                return {
+                    ...participant,
+                    registrations: registrationsWithNames
+                };
+            }
+            return participant;
+        })
+    );
+
+    // Filter by event if user is coordinator
+    if (userRole === 'coordinator' && userEventId) {
+        participantsWithEventNames = participantsWithEventNames.filter(participant => {
+            return participant.registrations && participant.registrations.some(reg => 
+                reg.event_id.toString() === userEventId.toString()
+            );
+        });
+        console.log(`[${new Date().toISOString()}] Filtered to ${participantsWithEventNames.length} participants for coordinator's event`);
+    }
+
+    // Calculate totals after filtering
+    const totalFiltered = participantsWithEventNames.length;
+    const [regularTotal, spotTotal] = await Promise.all([
+        Participant.countDocuments(),
+        spotParticipant.countDocuments()
+    ]);
+
+    console.log(`[${new Date().toISOString()}] Found ${totalFiltered} participants (${regularTotal} regular + ${spotTotal} spot)`);
 
     const data = {
-        participants: combinedParticipants,
+        participants: participantsWithEventNames,
         pagination: {
             current: page,
-            total: Math.ceil(totalDocs / limit),
-            hasMore: page * limit < totalDocs,
-            totalParticipants: totalDocs
+            total: Math.ceil(totalFiltered / limit),
+            hasMore: page * limit < totalFiltered,
+            totalParticipants: totalFiltered
         },
         summary: {
             regularParticipants: regularTotal,
             spotParticipants: spotTotal
-        }
+        },
+        userRole: userRole,
+        eventFilter: userRole === 'coordinator' ? req.user.eventName : null
     };
 
     // NO CACHING - Real-time data only
@@ -272,6 +384,311 @@ export const getDashboard = asyncHandler(async (req, res) => {
         return handleError(res, {
             message: 'Failed to load dashboard data',
             code: 'DASHBOARD_ERROR',
+            details: error.message
+        }, 500);
+    }
+});
+
+// Registration Team Login
+export const registrationLogin = asyncHandler(async (req, res) => {
+    try {
+        const { username } = sanitizeInput(req.body);
+
+        console.log('Registration team login attempt:', { username });
+
+        const regTeam = await RegistrationTeam.findOne({ 
+            username: username.trim().toLowerCase(),
+            isActive: true
+        });
+
+        if (!regTeam) {
+            console.log('Registration team member not found', { username });
+            return handleError(res, {
+                message: 'Invalid username',
+                code: 'AUTH_FAILED'
+            }, 401);
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            {
+                id: regTeam._id,
+                username: regTeam.username,
+                name: regTeam.name,
+                role: 'registration'
+            },
+            process.env.JWT_SECRET || 'your-secret-key',
+            { expiresIn: '12h' }
+        );
+
+        console.log('Registration team login successful', { name: regTeam.name });
+
+        return sendResponse(res, {
+            message: 'Login successful',
+            token,
+            user: {
+                name: regTeam.name,
+                username: regTeam.username,
+                role: 'registration'
+            }
+        });
+
+    } catch (error) {
+        console.error('Registration team login error:', error);
+        return handleError(res, {
+            message: 'Login process failed',
+            code: 'LOGIN_ERROR',
+            details: error.message
+        }, 500);
+    }
+});
+
+// Get participant by Fest ID
+export const getParticipantByFestId = asyncHandler(async (req, res) => {
+    try {
+        const { festId } = req.params;
+
+        console.log(`Fetching participant with Fest ID: ${festId}`);
+
+        // Search in both collections by ticketUid or order_id
+        let participant = await Participant.findOne({ 
+            $or: [
+                { ticketUid: festId },
+                { 'registrations.order_id': festId }
+            ]
+        }).lean();
+        let source = 'regular';
+
+        if (!participant) {
+            participant = await spotParticipant.findOne({ 
+                $or: [
+                    { ticketUid: festId },
+                    { 'registrations.order_id': festId }
+                ]
+            }).lean();
+            source = 'spot';
+        }
+
+        if (!participant) {
+            console.log(`Participant not found with ID: ${festId}`);
+            return handleError(res, {
+                message: 'Participant not found',
+                code: 'NOT_FOUND'
+            }, 404);
+        }
+
+        console.log(`Found participant: ${participant.name} (${source})`);
+
+        // Populate event names
+        if (participant.registrations && participant.registrations.length > 0) {
+            const registrationsWithNames = await Promise.all(
+                participant.registrations.map(async (registration) => {
+                    try {
+                        const event = await Event.findById(registration.event_id).lean();
+                        return {
+                            ...registration,
+                            eventName: event ? event.eventName : 'Unknown Event'
+                        };
+                    } catch (error) {
+                        return {
+                            ...registration,
+                            eventName: 'Unknown Event'
+                        };
+                    }
+                })
+            );
+            participant.registrations = registrationsWithNames;
+        }
+
+        return sendResponse(res, {
+            participant,
+            source
+        });
+
+    } catch (error) {
+        console.error('Error fetching participant:', error);
+        return handleError(res, {
+            message: 'Failed to fetch participant',
+            code: 'FETCH_ERROR',
+            details: error.message
+        }, 500);
+    }
+});
+
+// Check-in participant
+export const checkInParticipant = asyncHandler(async (req, res) => {
+    try {
+        const { festId } = sanitizeInput(req.body);
+
+        console.log(`Check-in attempt for Fest ID: ${festId}`);
+
+        // Search in both collections by ticketUid, order_id, or phone number
+        let participant = await Participant.findOne({ 
+            $or: [
+                { ticketUid: festId },
+                { 'registrations.order_id': festId },
+                { phone: festId }
+            ]
+        });
+        let source = 'regular';
+        let Model = Participant;
+
+        if (!participant) {
+            participant = await spotParticipant.findOne({ 
+                $or: [
+                    { ticketUid: festId },
+                    { 'registrations.order_id': festId },
+                    { phone: festId }
+                ]
+            });
+            source = 'spot';
+            Model = spotParticipant;
+        }
+
+        if (!participant) {
+            console.log(`Participant not found with ID/Phone: ${festId}`);
+            return handleError(res, {
+                message: 'Participant not found. Please check the Ticket ID, Order ID, or Phone Number.',
+                code: 'NOT_FOUND'
+            }, 404);
+        }
+
+        console.log(`Found participant: ${participant.name} (Source: ${source})`);
+
+        // Define group events
+        const groupEvents = [
+            'SHARK TANK', 'GERBER BATTLE', 'LUMINARY DESIGNS', 'AQUA IGNITION', 'FLIGHT EMBERS',
+            'KOHJ KSHETRA', 'AGNI CHAKRAVYUHA', 'VEERA SAMARA', 'TAAL YUDHA',
+            'SANGEETH SPARSH', 'BHAVA SPHRUTHI', 'NRITHYA PARVA', 'SHAKTHI SANGRAM'
+        ];
+
+        // Check if participant is registered for any group event
+        let isGroupEvent = false;
+        let groupEventIds = [];
+        if (participant.registrations && participant.registrations.length > 0) {
+            for (const reg of participant.registrations) {
+                try {
+                    const event = await Event.findById(reg.event_id).lean();
+                    if (event && groupEvents.includes(event.eventName.toUpperCase())) {
+                        isGroupEvent = true;
+                        groupEventIds.push(reg.event_id.toString());
+                    }
+                } catch (error) {
+                    console.error('Error checking event:', error);
+                }
+            }
+        }
+
+        // Check if already checked in
+        if (participant.check_in) {
+            // Get event names for response
+            let eventNames = [];
+            if (participant.registrations && participant.registrations.length > 0) {
+                const events = await Promise.all(
+                    participant.registrations.map(async (reg) => {
+                        try {
+                            const event = await Event.findById(reg.event_id).lean();
+                            return event ? event.eventName : 'Unknown Event';
+                        } catch (error) {
+                            return 'Unknown Event';
+                        }
+                    })
+                );
+                eventNames = events.filter(Boolean);
+            }
+
+            return sendResponse(res, {
+                message: 'Participant already checked in',
+                alreadyCheckedIn: true,
+                participant: {
+                    name: participant.name,
+                    festId: participant.ticketUid,
+                    phone: participant.phone,
+                    college: participant.college,
+                    events: eventNames,
+                    check_in: participant.check_in,
+                    check_in_time: participant.check_in_time
+                }
+            });
+        }
+
+        // Mark as checked in
+        participant.check_in = true;
+        participant.check_in_time = new Date();
+        await participant.save({ validateBeforeSave: false });
+
+        let checkedInCount = 1;
+        let teamMembersCheckedIn = [];
+
+        // If group event, check in all team members
+        if (isGroupEvent && groupEventIds.length > 0) {
+            console.log(`Group event detected. Checking in team members...`);
+            
+            // Find all participants registered for the same group event(s)
+            const teamMembers = await Model.find({
+                'registrations.event_id': { $in: groupEventIds.map(id => new mongoose.Types.ObjectId(id)) },
+                _id: { $ne: participant._id }, // Exclude current participant
+                check_in: { $ne: true } // Only check in those not already checked in
+            });
+
+            console.log(`Found ${teamMembers.length} team members to check in`);
+
+            // Check in all team members
+            for (const member of teamMembers) {
+                member.check_in = true;
+                member.check_in_time = new Date();
+                await member.save({ validateBeforeSave: false });
+                teamMembersCheckedIn.push(member.name);
+                checkedInCount++;
+            }
+
+            console.log(`Checked in ${checkedInCount} participants (including team members)`);
+        }
+
+        // Get event names
+        let eventNames = [];
+        if (participant.registrations && participant.registrations.length > 0) {
+            const events = await Promise.all(
+                participant.registrations.map(async (reg) => {
+                    try {
+                        const event = await Event.findById(reg.event_id).lean();
+                        return event ? event.eventName : 'Unknown Event';
+                    } catch (error) {
+                        return 'Unknown Event';
+                    }
+                })
+            );
+            eventNames = events.filter(Boolean);
+        }
+
+        console.log(`Successfully checked in: ${participant.name}`);
+
+        const responseMessage = isGroupEvent && teamMembersCheckedIn.length > 0
+            ? `Check-in successful! ${checkedInCount} team member(s) checked in`
+            : 'Check-in successful';
+
+        return sendResponse(res, {
+            message: responseMessage,
+            alreadyCheckedIn: false,
+            isGroupEvent: isGroupEvent,
+            checkedInCount: checkedInCount,
+            teamMembers: teamMembersCheckedIn,
+            participant: {
+                name: participant.name,
+                festId: participant.ticketUid,
+                phone: participant.phone,
+                college: participant.college,
+                events: eventNames,
+                check_in: participant.check_in,
+                check_in_time: participant.check_in_time
+            }
+        });
+
+    } catch (error) {
+        console.error('Check-in error:', error);
+        return handleError(res, {
+            message: 'Check-in failed',
+            code: 'CHECKIN_ERROR',
             details: error.message
         }, 500);
     }

@@ -17,16 +17,28 @@ connectDB();
 // Initialize express app
 const app = express();
 
+// Trust proxy for Render deployment
+app.set('trust proxy', true);
+
+// CORS middleware - allow all origins in development, specific in production
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' 
+        ? [
+            'https://sambhram-admin.vercel.app',
+            'https://sambhram.sit.ac.in',
+            process.env.FRONTEND_URL
+          ].filter(Boolean)
+        : '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
 // Middleware setup
 app.use(express.json()); // Middleware for parsing JSON data
-app.use(morgan("dev"));   // Logging middleware
-
-// CORS middleware with specific origin
-app.use(cors({
-    origin: '*' // Allow all origins
-}));
-
-app.set('trust proxy', true);
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));   // Logging middleware
 
 // Routes
 app.use("/api/v1/auth", authRoutes);
@@ -36,13 +48,49 @@ app.use('/api/webhook', webhookRoutes);
 
 // Root endpoint
 app.get("/", (request, response) => {
-    response.send("Server is up and running");
+    response.json({
+        success: true,
+        message: "Sambhram Backend API is running",
+        version: "1.0.0",
+        timestamp: new Date().toISOString()
+    });
 });
 
-const PORT = process.env.PORT || 5001;
+// Health check endpoint
+app.get("/health", (request, response) => {
+    response.json({
+        success: true,
+        status: "healthy",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found",
+        path: req.path
+    });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error('Server Error:', err);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
+});
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server Running on ${PORT}`);
-})
+    console.log(`🚀 Server Running on PORT ${PORT}`);
+    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 CORS enabled for: ${corsOptions.origin}`);
+});
 
 export default app;

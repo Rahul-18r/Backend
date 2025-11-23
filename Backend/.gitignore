@@ -1,7 +1,45 @@
-# Ticket images - generated locally
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+backend.log
+
+# Generated files
 tickets/*.jpg
 tickets/*.jpeg
 tickets/*.png
+ticket/generated/*.html
 
-# But keep the README
+# Keep README files
 !tickets/README.md
+!ticket/README.md
+
+# Script files (one-time use)
+checkParticipants.js
+checkRegistrationTeam.js
+fixParticipant.js
+moveDraftParticipant.js
+testRegistrationLogin.js
+updateDraftParticipant.js
+updateRegistrationsWithAmount.js
+generateTickets.js
+
+# Documentation (keep in repo but not needed for deployment)
+# *.md files are kept for reference
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Images folder (if not needed)
+images/
