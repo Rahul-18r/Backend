@@ -5,7 +5,6 @@ import './Login.css';
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     name: '',
-    contact: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -25,7 +24,7 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      console.log('Attempting login with:', { name: formData.name, contact: formData.contact });
+      console.log('Attempting login with:', { name: formData.name });
       
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/admin-login`, {
         method: 'POST',
@@ -34,7 +33,6 @@ const Login = ({ onLogin }) => {
         },
         body: JSON.stringify({
           name: formData.name.trim(),
-          contact: formData.contact.trim(),
           password: formData.password
         }),
       });
@@ -82,33 +80,16 @@ const Login = ({ onLogin }) => {
         <form onSubmit={handleSubmit} className="login-form">
           
           <div className="form-group">
-            <label htmlFor="name">Coordinator Name</label>
+            <label htmlFor="name">Admin Name</label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter your full name"
+              placeholder="Enter your admin name"
               required
-              autoComplete="name"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="contact">Contact Number</label>
-            <input
-              type="tel"
-              id="contact"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              placeholder="10-digit mobile number"
-              pattern="[0-9]{10}"
-              maxLength="10"
-              required
-              autoComplete="tel"
+              autoComplete="username"
               disabled={loading}
             />
           </div>

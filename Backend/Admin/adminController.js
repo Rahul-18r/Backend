@@ -54,18 +54,17 @@ const asyncHandler = (fn) => (req, res, next) => {
 // Simple login handler without rate limiting
 export const adminLogin = asyncHandler(async (req, res) => {
     try {
-            const { contact, password, name } = sanitizeInput(req.body);
+            const { password, name } = sanitizeInput(req.body);
 
-            console.log('Login data:', { contact, password, name });
+            console.log('Login data:', { password, name });
 
             // Find admin in the database
             const adminData = await Admin.findOne({ 
-                name: name.trim(),
-                phone: contact
+                name: name.trim()
             }).select('+password');
 
             if (!adminData) {
-                console.log('Admin not found', { contact});
+                console.log('Admin not found', { name });
                 return handleError(res, {
                     message: 'Invalid credentials',
                     code: 'AUTH_FAILED'
@@ -74,7 +73,7 @@ export const adminLogin = asyncHandler(async (req, res) => {
 
             // Check if the password is correct
             if (password !== adminData.password) {
-                console.log('Incorrect password', { contact});
+                console.log('Incorrect password', { name });
                 return handleError(res, {
                     message: 'Invalid credentials',
                     code: 'AUTH_FAILED'
