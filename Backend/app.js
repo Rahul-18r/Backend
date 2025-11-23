@@ -20,10 +20,12 @@ const app = express();
 // Trust proxy for Render deployment
 app.set('trust proxy', true);
 
-// CORS middleware - allow all origins in development, specific in production
+// CORS middleware - allow all origins in development, specific + localhost in production
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
         ? [
+            'http://localhost:3055',
+            'http://localhost:3056',
             'https://sambhram-admin.vercel.app',
             'https://sambhram.sit.ac.in',
             process.env.FRONTEND_URL
