@@ -27,6 +27,7 @@ const corsOptions = {
             'http://localhost:3055',
             'http://localhost:3056',
             'https://sambhram-admin.vercel.app',
+            'https://admin-seven-sooty-57.vercel.app',
             'https://sambhram.sit.ac.in',
             process.env.FRONTEND_URL
           ].filter(Boolean)
