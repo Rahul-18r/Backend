@@ -97,6 +97,23 @@ const EventCard = ({ registration, index }) => {
                 <span className="font-semibold text-accent/90 min-w-[80px]">Type:</span>
                 <span className="ml-2 text-white">{eventDetails.eventType}</span>
               </p>
+              {registration.isTeamEvent && (registration.teamName || registration.teamMembers) && (
+                <div className="mt-4 pt-4 border-t border-accent/30">
+                  {registration.teamName && (
+                    <p className="font-semibold text-accent mb-2">{registration.teamName}:</p>
+                  )}
+                  {registration.teamMembers && registration.teamMembers.length > 0 && (
+                    <div className="ml-4 space-y-1">
+                      {registration.teamMemberName && (
+                        <p className="text-white/90">{registration.teamMemberName}</p>
+                      )}
+                      {registration.teamMembers.map((member, idx) => (
+                        <p key={idx} className="text-white/90">{member.name}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

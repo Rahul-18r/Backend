@@ -4,22 +4,27 @@ import Login from './pages/Login';
 import CoordinatorLogin from './pages/CoordinatorLogin';
 import RegistrationLogin from './pages/RegistrationLogin';
 import Dashboard from './pages/Dashboard';
+import ModernDashboard from './pages/ModernDashboard';
 import VerifyTicket from './pages/VerifyTicket';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    // Check if user is already logged in (admin or coordinator)
+    // Check if user is already logged in
     const token = localStorage.getItem('adminToken');
     const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
-    if (token && isLoggedIn === 'true') {
+    const role = localStorage.getItem('userRole');
+    if (token && isLoggedIn === 'true' && role) {
       setIsAuthenticated(true);
+      setUserRole(role);
     }
   }, []);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+    setUserRole(localStorage.getItem('userRole'));
   };
 
   const handleLogout = () => {
@@ -31,52 +36,85 @@ function App() {
     localStorage.removeItem('coordinatorId');
     localStorage.removeItem('username');
     setIsAuthenticated(false);
+    setUserRole(null);
+  };
+
+  // Protected route component that checks role
+  const ProtectedRoute = ({ children, allowedRoles }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login/admin" />;
+    }
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
+      return <Navigate to="/dashboard" />;
+    }
+    return children;
+  };
+
+  // Login route component that prevents logged in users from accessing
+  const LoginRoute = ({ children, targetRole }) => {
+    if (isAuthenticated) {
+      // If already logged in with different role, show error or redirect
+      if (userRole !== targetRole) {
+        return <Navigate to="/dashboard" />;
+      }
+      return <Navigate to="/dashboard" />;
+    }
+    return children;
   };
 
   return (
     <Router>
       <Routes>
         <Route 
-          path="/login" 
+          path="/login/admin" 
           element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard" /> : 
-            <Login onLogin={handleLogin} />
+            <LoginRoute targetRole="admin">
+              <Login onLogin={handleLogin} />
+            </LoginRoute>
           } 
         />
         <Route 
-          path="/coordinator-login" 
+          path="/login/coordinator" 
           element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard" /> : 
-            <CoordinatorLogin onLogin={handleLogin} />
+            <LoginRoute targetRole="coordinator">
+              <CoordinatorLogin onLogin={handleLogin} />
+            </LoginRoute>
           } 
         />
         <Route 
-          path="/registration-login" 
+          path="/login/registration" 
           element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard" /> : 
-            <RegistrationLogin onLogin={handleLogin} />
+            <LoginRoute targetRole="registration">
+              <RegistrationLogin onLogin={handleLogin} />
+            </LoginRoute>
           } 
         />
         <Route 
           path="/dashboard" 
           element={
-            isAuthenticated ? 
-            <Dashboard onLogout={handleLogout} /> : 
-            <Navigate to="/login" />
+            <ProtectedRoute>
+              <Dashboard onLogout={handleLogout} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/modern" 
+          element={
+            <ProtectedRoute>
+              <ModernDashboard onLogout={handleLogout} />
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/verify" 
           element={
-            isAuthenticated ? 
-            <VerifyTicket onLogout={handleLogout} /> : 
-            <Navigate to="/login" />
+            <ProtectedRoute>
+              <VerifyTicket onLogout={handleLogout} />
+            </ProtectedRoute>
           } 
         />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Navigate to="/login/admin" />} />
+        <Route path="*" element={<Navigate to="/login/admin" />} />
       </Routes>
     </Router>
   );

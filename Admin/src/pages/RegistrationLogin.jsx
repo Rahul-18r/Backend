@@ -62,7 +62,6 @@ const RegistrationLogin = ({ onLogin }) => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g., reg1, reg2, reg3, reg4, reg5"
               required
               disabled={loading}
             />
@@ -84,24 +83,7 @@ const RegistrationLogin = ({ onLogin }) => {
         </form>
 
         <div className="login-footer">
-          <button 
-            onClick={() => navigate('/login')}
-            className="switch-login-btn"
-          >
-            Admin Login →
-          </button>
-          <button 
-            onClick={() => navigate('/coordinator-login')}
-            className="switch-login-btn"
-          >
-            Coordinator Login →
-          </button>
           <p>© 2025 Sambhram Institute of Technology</p>
-        </div>
-
-        <div className="example-credentials">
-          <h4>Example Usernames:</h4>
-          <p>reg1, reg2, reg3, reg4, or reg5</p>
         </div>
       </div>
     </div>

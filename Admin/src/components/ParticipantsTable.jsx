@@ -149,11 +149,24 @@ const ParticipantsTable = ({ participants, onRefresh }) => {
                 const teamRegistrations = participant.registrations.filter(r => r.isTeamEvent);
                 const teamInfo = teamRegistrations.length > 0
                   ? teamRegistrations.map(r => {
-                      const teamName = r.teamName ? `[${r.teamName}] ` : '';
-                      const memberName = r.teamMemberName || 'N/A';
-                      return `${teamName}${memberName}`;
-                    }).filter(Boolean).join(', ')
-                  : 'Solo Events';
+                      const teamName = r.teamName ? `${r.teamName}` : '';
+                      const members = [];
+                      
+                      // Add the lead/member name first
+                      if (r.teamMemberName) {
+                        members.push(r.teamMemberName);
+                      }
+                      
+                      // Add team members from teamMembers array
+                      if (r.teamMembers && r.teamMembers.length > 0) {
+                        r.teamMembers.forEach(tm => {
+                          members.push(tm.name);
+                        });
+                      }
+                      
+                      return { teamName, members };
+                    }).filter(Boolean)
+                  : null;
 
                 return (
                   <tr
@@ -184,10 +197,29 @@ const ParticipantsTable = ({ participants, onRefresh }) => {
                         {participant.registrations.length}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-white/70 font-outfit max-w-xs">
-                      <span className="text-xs italic" title={teamInfo}>
-                        {teamInfo}
-                      </span>
+                    <td className="px-6 py-4 text-sm text-white/70 font-outfit max-w-sm">
+                      <div className="text-xs space-y-2">
+                        {!teamInfo ? (
+                          <span className="italic text-white/50">Solo Events</span>
+                        ) : (
+                          teamInfo.map((team, idx) => (
+                            <div key={idx} className="mb-2 last:mb-0">
+                              {team.teamName && (
+                                <div className="font-semibold text-accent/90 mb-1">
+                                  {team.teamName}:
+                                </div>
+                              )}
+                              <div className="pl-2 text-white/70 space-y-0.5">
+                                {team.members.map((member, mIdx) => (
+                                  <div key={mIdx} className="text-[11px] leading-relaxed">
+                                    {member}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-outfit">
                       {hasPaidRegistrations ? (

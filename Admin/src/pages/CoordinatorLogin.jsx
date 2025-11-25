@@ -65,11 +65,9 @@ const CoordinatorLogin = ({ onLogin }) => {
               id="coordinatorId"
               value={coordinatorId}
               onChange={(e) => setCoordinatorId(e.target.value)}
-              placeholder="e.g., jaya_E18"
               required
               disabled={loading}
             />
-            <small className="input-hint">Format: username_E## (e.g., jaya_E18)</small>
           </div>
 
           {error && (
@@ -88,18 +86,7 @@ const CoordinatorLogin = ({ onLogin }) => {
         </form>
 
         <div className="login-footer">
-          <button 
-            onClick={() => navigate('/login')}
-            className="switch-login-btn"
-          >
-            Admin Login →
-          </button>
-        </div>
-
-        <div className="example-credentials">
-          <h4>Example Credentials:</h4>
-          <p><strong>Jayasagar (VEERA SAMARA)</strong></p>
-          <p>ID: jaya_E18</p>
+          <p>© 2025 Sambhram Institute of Technology</p>
         </div>
       </div>
     </div>

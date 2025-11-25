@@ -72,6 +72,8 @@ const Dashboard = ({ onLogout }) => {
   const [showParticipantModal, setShowParticipantModal] = useState(false);
   const [checkInMessage, setCheckInMessage] = useState({ type: '', text: '' });
   const [groupCheckInData, setGroupCheckInData] = useState({ isGroupEvent: false, checkedInCount: 0, teamMembers: [] });
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [selectedParticipantTeams, setSelectedParticipantTeams] = useState(null);
   
   // Get user role and event info
   const userRole = localStorage.getItem('userRole') || 'admin';
@@ -229,6 +231,26 @@ const Dashboard = ({ onLogout }) => {
     localStorage.removeItem('adminName');
     if (onLogout) onLogout();
     navigate('/login');
+  };
+
+  const openTeamModal = (participant) => {
+    // For coordinators: only show their event's team details
+    const eventsToShow = isCoordinator && coordinatorEventName
+      ? participant.registrations?.filter(r => 
+          r.eventName?.toLowerCase() === coordinatorEventName.toLowerCase()
+        )
+      : participant.registrations;
+
+    setSelectedParticipantTeams({
+      name: participant.name,
+      events: eventsToShow || []
+    });
+    setShowTeamModal(true);
+  };
+
+  const closeTeamModal = () => {
+    setShowTeamModal(false);
+    setSelectedParticipantTeams(null);
   };
 
   const handleQRScan = async (festId) => {
@@ -505,8 +527,8 @@ const Dashboard = ({ onLogout }) => {
                     <th>Phone</th>
                     <th>College</th>
                     <th>Ticket ID</th>
-                    {!isCoordinator && !isRegistration && <th>Events</th>}
-                    {!isRegistration && <th>Team Members</th>}
+                    {!isRegistration && <th>Events</th>}
+                    {!isRegistration && <th>Actions</th>}
                     {!isRegistration && <th>Amount</th>}
                     <th>Check-In</th>
                   </tr>
@@ -514,7 +536,6 @@ const Dashboard = ({ onLogout }) => {
                 <tbody>
                   {filteredParticipants.map((participant, index) => {
                     const totalAmount = participant.registrations?.reduce((sum, r) => sum + (r.amount || 0), 0) || 0;
-                    const eventNames = participant.registrations?.map(r => r.eventName).filter(Boolean).join(', ') || 'None';
                     
                     // Get team events
                     let teamEvents = participant.registrations?.filter(r => r.isTeamEvent) || [];
@@ -526,46 +547,61 @@ const Dashboard = ({ onLogout }) => {
                       );
                     }
                     
-                    // For coordinators: show only team members for their event, without event names
-                    // For admins: show team members with event names
-                    let teamMembersInfo = 'Individual';
-                    
-                    if (isCoordinator) {
-                      // Coordinator view: just team member names for their event only
-                      if (teamEvents.length > 0) {
-                        const memberNames = teamEvents
-                          .map(r => r.teamMemberName)
-                          .filter(Boolean)
-                          .join(', ');
-                        teamMembersInfo = memberNames || 'N/A';
-                      }
-                    } else {
-                      // Admin view: event names with team members and team names
-                      if (teamEvents.length > 0) {
-                        teamMembersInfo = teamEvents.map(r => {
-                          const eventName = r.eventName || 'Unknown Event';
-                          const teamName = r.teamName ? ` (${r.teamName})` : '';
-                          const members = r.teamMemberName || 'N/A';
-                          return `${eventName}${teamName}: ${members}`;
-                        }).join('\n');
-                      }
-                    }
-                    
                     return (
                       <tr key={participant._id || index}>
                         <td>{participant.name || 'N/A'}</td>
                         <td>{participant.phone || 'N/A'}</td>
                         <td>{participant.college || 'N/A'}</td>
                         <td className="ticket-id">{participant.ticketUid || 'N/A'}</td>
-                        {!isCoordinator && !isRegistration && <td className="events-list">{eventNames}</td>}
                         {!isRegistration && (
-                          <td className="team-info">
-                            {isCoordinator ? (
-                              <span style={{fontSize: '13px', color: '#4b5563'}}>{teamMembersInfo}</span>
+                          <td className="events-list">
+                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '4px'}}>
+                              {(isCoordinator 
+                                ? participant.registrations?.filter(r => r.eventName?.toLowerCase() === coordinatorEventName?.toLowerCase())
+                                : participant.registrations
+                              )?.map((reg, i) => (
+                                <span
+                                  key={i}
+                                  style={{
+                                    padding: '4px 8px',
+                                    fontSize: '11px',
+                                    fontWeight: '500',
+                                    borderRadius: '4px',
+                                    background: '#dbeafe',
+                                    color: '#1e40af',
+                                    border: '1px solid #93c5fd',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                >
+                                  {reg.eventName}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                        )}
+                        {!isRegistration && (
+                          <td>
+                            {teamEvents.length > 0 ? (
+                              <button
+                                onClick={() => openTeamModal(participant)}
+                                style={{
+                                  padding: '6px 12px',
+                                  fontSize: '13px',
+                                  fontWeight: '500',
+                                  background: '#9333ea',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onMouseOver={(e) => e.target.style.background = '#7e22ce'}
+                                onMouseOut={(e) => e.target.style.background = '#9333ea'}
+                              >
+                                View Teams
+                              </button>
                             ) : (
-                              <div style={{whiteSpace: 'pre-line', fontSize: '13px', lineHeight: '1.6'}}>
-                                {teamMembersInfo}
-                              </div>
+                              <span style={{fontSize: '12px', color: '#9ca3af', fontStyle: 'italic'}}>No teams</span>
                             )}
                           </td>
                         )}
@@ -590,6 +626,105 @@ const Dashboard = ({ onLogout }) => {
           </div>
         )}
       </main>
+
+      {/* Team Details Modal */}
+      {showTeamModal && selectedParticipantTeams && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1e293b 0%, #581c87 100%)',
+            borderRadius: '16px',
+            padding: '32px',
+            maxWidth: '800px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            border: '2px solid rgba(147, 51, 234, 0.3)',
+            position: 'relative'
+          }}>
+            <button
+              onClick={closeTeamModal}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'transparent',
+                border: 'none',
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '24px',
+                cursor: 'pointer',
+                padding: '4px 8px'
+              }}
+              onMouseOver={(e) => e.target.style.color = 'white'}
+              onMouseOut={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.7)'}
+            >
+              ✕
+            </button>
+
+            <h2 style={{color: 'white', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px'}}>Team Details</h2>
+            <p style={{color: '#d8b4fe', marginBottom: '24px'}}>Participant: {selectedParticipantTeams.name}</p>
+
+            <div style={{display: 'flex', flexDirection: 'column', gap: '24px'}}>
+              {selectedParticipantTeams.events.map((event, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                  }}
+                >
+                  <h3 style={{color: 'white', fontSize: '20px', fontWeight: 'bold', marginBottom: '16px'}}>
+                    {event.eventName}
+                  </h3>
+
+                  {event.isTeamEvent && event.teamName ? (
+                    <>
+                      <div style={{marginBottom: '16px'}}>
+                        <span style={{color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px'}}>Team: </span>
+                        <span style={{color: '#d8b4fe', fontSize: '18px', fontWeight: '600'}}>{event.teamName}</span>
+                      </div>
+
+                      {event.teamMembers && event.teamMembers.length > 0 && (
+                        <div>
+                          <h4 style={{color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px', marginBottom: '12px'}}>Members:</h4>
+                          <ul style={{marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                            {event.teamMembers.map((member, memberIdx) => (
+                              <li key={memberIdx} style={{display: 'flex', alignItems: 'start'}}>
+                                <span style={{color: '#a78bfa', marginRight: '12px'}}>•</span>
+                                <div style={{flex: 1}}>
+                                  <div style={{color: 'white', fontWeight: '500'}}>
+                                    {typeof member === 'string' ? member : (member.name || 'N/A')}
+                                  </div>
+                                  {typeof member === 'object' && member.phone && (
+                                    <div style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px'}}>{member.phone}</div>
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div style={{color: 'rgba(255, 255, 255, 0.5)', fontStyle: 'italic'}}>Solo event (no team)</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

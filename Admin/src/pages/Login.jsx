@@ -133,20 +133,6 @@ const Login = ({ onLogin }) => {
         </form>
 
         <div className="login-footer">
-          <button 
-            onClick={() => navigate('/coordinator-login')}
-            className="switch-login-btn"
-            type="button"
-          >
-            Event Coordinator Login →
-          </button>
-          <button 
-            onClick={() => navigate('/registration-login')}
-            className="switch-login-btn"
-            type="button"
-          >
-            Registration Team Login →
-          </button>
           <p>© 2025 Sambhram Institute of Technology</p>
         </div>
       </div>

@@ -56,10 +56,14 @@ const ParticipantModal = ({ participant, onClose, alreadyCheckedIn, isGroupEvent
 
             {isGroupEvent && teamMembers && teamMembers.length > 0 && (
               <div className="detail-row">
-                <span className="detail-label">Team Members Checked In:</span>
-                <span className="detail-value">
-                  {teamMembers.join(', ')}
-                </span>
+                <span className="detail-label">Team Members:</span>
+                <div className="detail-value">
+                  {teamMembers.map((member, idx) => (
+                    <div key={idx} style={{marginBottom: '4px'}}>
+                      • {member}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
